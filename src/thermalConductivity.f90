@@ -75,7 +75,8 @@
         real(kind=real64),parameter     ::      KB = 0.00008617d0           !   Boltzmann's constant (eV/K)    
         real(kind=real64),parameter     ::      EVFSATOWM = 1.602d6         !   eV/fs 1/A 1/K in W/m/K
         real(kind=real128)              ::      sqrt2onPI = sqrt( 0.5_real128/atan(1.0_real128) )
-        real(kind=real64),parameter     ::      PI = 3.141592653590d0           !    
+        real(kind=real64),parameter     ::      PI = 3.141592653590d0       !    
+        real(kind=real64),parameter     ::      L = 2.44d-8                 !   Lorentz constant 
         
     !---    properties read from input file
         integer                         ::      nAtoms                      !   number of atoms    
@@ -92,7 +93,7 @@
     !---    dummy variables
         logical                         ::      ok 
         integer                         ::      ii,ioerr,bb
-        real(kind=real64)               ::      ee,rho,kk,rr,e2Bar
+        real(kind=real64)               ::      ee,kk,rr,e2Bar
         
         
     !---    output variables
@@ -101,6 +102,7 @@
         real(kind=real64)                   ::      eBar            !   mean excess potential energy
         real(kind=real64)                   ::      kappa           !   thermal conductivity x volume per atom   
         real(kind=real64)                   ::      alpha           !   thermal diffusivity
+        real(kind=real64)                   ::      rho             !   electrical resisitivity
         real(kind=real64)                   ::      eVar            !   variance of potential energy
         integer,dimension(:),allocatable    ::      hist            !   histogram of atom potential energy counts
         
@@ -227,13 +229,16 @@
         do bb = 0,NBIN
             ee = EMIN + deltaE*bb
             
-            rho = BroadenedMaxwellBoltzmann( ee,T,sigma )*deltaE*nAtoms 
+            
             call computeDefectsFromHist( hist(bb),nAtoms,ee,deltaE,T, sigma, b0,vF,S_0,S_1,S_2 , kk,rr )
             
             nDefects = nDefects + kk
             rBar = rBar + rr
             
-            if (opHist) write(*,fmt='(2f16.6,i16,2f16.6)') ee,rho,hist(bb),kk,rr
+            if (opHist) then
+                rho = BroadenedMaxwellBoltzmann( ee,T,sigma )*deltaE*nAtoms 
+                write(*,fmt='(2f16.6,i16,2f16.6)') ee,rho,hist(bb),kk,rr
+            end if
             
         end do
         rBar = rBar/nAtoms
@@ -248,21 +253,30 @@
     !---    compute excess potential energy variance
         eVar = max(0.0d0, e2Bar - eBar*eBar)            !   max function to avoid rounding errors.
         
+    !---    compute resisitivity
+        rho = L * T / kappa
         
         
     !---    output answer
         print *,""
         write(*,fmt='(3(a,i16))')   "atom count             ",nAtoms
         
-        write(*,fmt='(3(a,g16.6))') "mean excess energy     ",eBar ,"             +/- ",sqrt( eVar )," eV"
+        write(*,fmt='(3(a,g16.6))') "mean excess energy     ",eBar ,"                   +/- ",sqrt( eVar )," eV"
         if (MDsim) &            
-        write(*,fmt='(3(a,g16.6))') "thermal energy 3/2 kT  ",1.5d0*kB*T," eV,     delta = ",eBar-1.5d0*kB*T," eV"
+        write(*,fmt='(3(a,g16.6))') "thermal energy 3/2 kT  ",1.5d0*kB*T," eV,           delta = ",eBar-1.5d0*kB*T," eV"
         
         write(*,fmt='(3(a,g16.6))') "excess energy variance ",eVar ," eV^2 "
         write(*,fmt='(3(a,g16.6))') "mean scattering rate   ",rBar ," 1/fs"
-        write(*,fmt='(3(a,g16.6))') "therm. cond. x Omega0  ",kappa," eV/fs A^2 1/K = ",kappa*EVFSATOWM," Omega0 W/m/K "
-        write(*,fmt='(3(a,g16.6))') "thermal diffusivity    ",alpha," A^2/fs        = ",alpha*1.0d-5   ," m^2/s"
-        write(*,fmt='(3(a,g16.6))') "number of defects      ",nDefects,"               = ",nDefects*100.0/nAtoms   ,"%"
+        !write(*,fmt='(3(a,g16.6))') "therm. cond. x Omega0  ",kappa," eV/fs A^2 1/K = ",kappa*EVFSATOWM," Omega0 W/m/K "
+        write(*,fmt='(3(a,g16.6))') "therm. cond. x Omega0  ",kappa," eV/fs 1/A 1/K (A^3) = ",kappa*EVFSATOWM," W/m/K (A^3)"
+        
+        
+        
+        write(*,fmt='(3(a,g16.6))') "resistivity / Omega0   ",rho/EVFSATOWM," Ohm m (1/A^3) "
+        
+        
+        write(*,fmt='(3(a,g16.6))') "thermal diffusivity    ",alpha," A^2/fs              = ",alpha*1.0d-5   ," m^2/s"
+        write(*,fmt='(3(a,g16.6))') "number of defects      ",nDefects,"                     = ",nDefects*100.0/nAtoms   ,"%"
         
         
         
