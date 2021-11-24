@@ -114,7 +114,7 @@
         call setProgramDescription( cla, "thermalConductivity.exe - computes thermal conductivity from potential energies &             
                                           \n     Note that kappa needs to be divided by volume per atom (in A^3) to give answer in standard units       &
                                           \n     This keeps thermal diffusivity independent of simulation volume." )
-        call setProgramVersion( cla, "2.0" )
+        call setProgramVersion( cla, "1.0.0" )
         call setCategories(cla,(/ "required    ","potential   ","simulation  ","scattering  ","histogram   " /))
         
         call get( cla,"f"    ,filename     ,LIB_CLA_REQUIRED,"      input filename                                                                 ",1 )  
