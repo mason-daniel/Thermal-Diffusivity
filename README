@@ -164,6 +164,19 @@ Compile the code as follows:
                    
 note that all the default quantities are for tungsten, and specifically the MNB potential 
     Mason et al (2017) https://doi.org/10.1088/1361-648X/aa9776
+        
+        
+    To find thermal conductivity for CG-relaxed data us the options
+        ./bin/thermalConductivity.exe -noMD -S_0 2.32 -S_1 1.194e-4 -S_2 1.108e-7 -f filename [...]
+        
+    To find thermal conductivity for MD snapshot data
+        ./bin/thermalConductivity.exe -MD -S_0 2.32 -S_1 1.154e-4 -S_2 1.209e-7 -f filename [...]
+            
+    To find electronic thermal conductivity for MD snapshot data (note- you will have to compute and add phonon component separately)
+        ./bin/thermalConductivity.exe -MD -S_0 2.32 -S_1 1.344e-4 -S_2 1.010e-7 -f filename [...]
+                
+    
+    
     
 How to fit the properties for a different potential is described in 
     Mason et al (2021) Arxiv 2106.13666 
