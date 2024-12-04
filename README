@@ -52,7 +52,7 @@ line 2:     e1 e2 e3 e4  .... enAtoms
 
 eg here is a file from which I have extracted potential energies from a lammps .dump file:
 
-    $ head ../PotentialEnergy/MNB-0000-0000.xyz.dump.pe.dat
+    $ head ../data/MNB-0000-0000.xyz.dump.pe.dat
     1638400
     -8.79784
     -8.88708
@@ -64,8 +64,8 @@ eg here is a file from which I have extracted potential energies from a lammps .
     -8.8604
     -8.91265
     
-    $ wc ../PotentialEnergy/MNB-0000-0000.xyz.dump.pe.dat
-    1638401  1638401 14563482 ../PotentialEnergy/MNB-0000-0000.xyz.dump.pe.dat
+    $ wc ../data/MNB-0000-0000.xyz.dump.pe.dat
+    1638401  1638401 14563482 ../data/MNB-0000-0000.xyz.dump.pe.dat
 
     
 
@@ -122,14 +122,14 @@ Compile the code as follows:
                                                                                                                                    
 
     Run a test with       
-        $ ./bin/thermalConductivity.exe -f PotentialEnergy/MNB-0000-0000.xyz.dump.pe.dat
+        $ ./bin/thermalConductivity.exe -f data/MNB-0000-0000.xyz.dump.pe.dat
         thermalConductivity.exe - computes thermal conductivity from potential energies
              Note that kappa needs to be divided by volume per atom (in A^3) to give answer in standard units
              This keeps thermal diffusivity independent of simulation volume.
         
         
          thermalConductivity.exe info - input parameters
-         file  : PotentialEnergy/MNB-0000-0000.xyz.dump.pe.dat                                                                                                                                                                                        
+         file  : data/MNB-0000-0000.xyz.dump.pe.dat                                                                                                                                                                                        
          Delta :    2.9000000000000001E-002
          b0    :    2.7410999999999999
          e0    :   -8.9000000000000004
